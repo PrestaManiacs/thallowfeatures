@@ -1,0 +1,29 @@
+/**
+* 2006-2022 THECON SRL
+*
+* NOTICE OF LICENSE
+*
+* DISCLAIMER
+*
+* YOU ARE NOT ALLOWED TO REDISTRIBUTE OR RESELL THIS FILE OR ANY OTHER FILE
+* USED BY THIS MODULE.
+*
+*  @author    THECON SRL <contact@thecon.ro>
+*  @copyright 2006-2022 THECON SRL
+*  @license   Commercial
+*/
+
+.th_allow_features_wrapper {
+    margin-bottom: 10px;
+    border: 1px solid #e6e6e6;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.th_allow_features_name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
