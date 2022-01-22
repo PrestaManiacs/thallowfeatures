@@ -38,7 +38,7 @@ class Thallowfeatures extends Module
         parent::__construct();
 
         $this->displayName = $this->l('Features Visibility');
-        $this->description = $this->l('Choose what features to be visible!');
+        $this->description = $this->l('Choose what features to be visible.');
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
     }
@@ -172,7 +172,7 @@ class Thallowfeatures extends Module
                     array(
                         'type' => 'custom_feature_choice',
                         'name' => '',
-                        'label_custom' => $this->l('Features'),
+                        'label_custom' => $this->l('Features to disable'),
                         'values' => Feature::getFeatures($this->context->language->id),
                         'values_db' => json_decode(Configuration::get('THALLOWFEATURES_DATA'), true),
                         'th_ps_sub_version' => $this->getSubPsVersion()
