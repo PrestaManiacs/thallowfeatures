@@ -59,6 +59,7 @@ class Thallowfeatures extends Module
     private function installDemoData()
     {
         Configuration::updateValue('THALLOWFEATURES_LIVE_MODE', false);
+        Configuration::updateValue('THALLOWFEATURES_ALLOW', true);
         Configuration::updateValue('THALLOWFEATURES_DATA', json_encode(array()));
 
         return true;
@@ -104,10 +105,9 @@ class Thallowfeatures extends Module
         }
 
         $this->context->smarty->assign('module_dir', $this->_path);
+        $maniacs = $this->context->smarty->fetch($this->local_path.'views/templates/admin/maniacs.tpl');
 
-        $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-
-        return $message.$output.$this->renderForm();
+        return $message.$maniacs.$this->renderForm();
     }
 
     /**
@@ -170,9 +170,28 @@ class Thallowfeatures extends Module
                         ),
                     ),
                     array(
+                        'type' => 'switch',
+                        'label' => $this->l('Include / Exclude Features'),
+                        'name' => 'THALLOWFEATURES_ALLOW',
+                        'desc' => 'Include / Exclude features selected below.',
+                        'is_bool' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Include')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Exclude')
+                            )
+                        ),
+                    ),
+                    array(
                         'type' => 'custom_feature_choice',
                         'name' => '',
-                        'label_custom' => $this->l('Features to disable'),
+                        'label_custom' => $this->l('Features'),
                         'values' => Feature::getFeatures($this->context->language->id),
                         'values_db' => json_decode(Configuration::get('THALLOWFEATURES_DATA'), true),
                         'th_ps_sub_version' => $this->getSubPsVersion()
@@ -192,6 +211,7 @@ class Thallowfeatures extends Module
     {
         return array(
             'THALLOWFEATURES_LIVE_MODE' => Tools::getValue('THALLOWFEATURES_LIVE_MODE', Configuration::get('THALLOWFEATURES_LIVE_MODE')),
+            'THALLOWFEATURES_ALLOW' => Tools::getValue('THALLOWFEATURES_ALLOW', Configuration::get('THALLOWFEATURES_ALLOW')),
         );
     }
 

@@ -16,6 +16,8 @@
 
 class Product extends ProductCore
 {
+    protected static $_frontFeaturesCacheOriginal = [];
+
     public static function getFrontFeaturesStatic($id_lang, $id_product)
     {
         if (Module::isInstalled('thallowfeatures') &&
@@ -32,13 +34,18 @@ class Product extends ProductCore
 
                 $id_features = implode(', ', array_map('intval', $features_id));
 
+                $type = ' IN ';
+                if (!Configuration::get('THALLOWFEATURES_ALLOW')) {
+                    $type = ' NOT IN ';
+                }
+
                 self::$_frontFeaturesCache[$id_product . '-' . $id_lang] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
                     '
                 SELECT name, value, pf.id_feature, f.position
                 FROM ' . _DB_PREFIX_ . 'feature_product pf
                 LEFT JOIN ' . _DB_PREFIX_ . 'feature_lang fl ON (fl.id_feature = pf.id_feature AND fl.id_lang = ' . (int) $id_lang . ')
                 LEFT JOIN ' . _DB_PREFIX_ . 'feature_value_lang fvl ON (fvl.id_feature_value = pf.id_feature_value AND fvl.id_lang = ' . (int) $id_lang . ')
-                LEFT JOIN ' . _DB_PREFIX_ . 'feature f ON (f.id_feature = pf.id_feature AND fl.id_lang = ' . (int) $id_lang . ' AND f.id_feature NOT IN ('.$id_features.'))
+                LEFT JOIN ' . _DB_PREFIX_ . 'feature f ON (f.id_feature = pf.id_feature AND fl.id_lang = ' . (int) $id_lang . ' AND f.id_feature '.$type.'('.$id_features.'))
                 ' . Shop::addSqlAssociation('feature', 'f') . '
                 WHERE pf.id_product = ' . (int) $id_product . ' 
                 ORDER BY f.position ASC'
@@ -49,5 +56,27 @@ class Product extends ProductCore
         }
 
         return parent::getFrontFeaturesStatic($id_lang, $id_product);
+    }
+
+    public function getFrontFeaturesStaticOriginal($id_lang, $id_product)
+    {
+        if (!Feature::isFeatureActive()) {
+            return [];
+        }
+        if (!array_key_exists($id_product . '-' . $id_lang, self::$_frontFeaturesCacheOriginal)) {
+            self::$_frontFeaturesCacheOriginal[$id_product . '-' . $id_lang] = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+                '
+                SELECT name, value, pf.id_feature, f.position
+                FROM ' . _DB_PREFIX_ . 'feature_product pf
+                LEFT JOIN ' . _DB_PREFIX_ . 'feature_lang fl ON (fl.id_feature = pf.id_feature AND fl.id_lang = ' . (int) $id_lang . ')
+                LEFT JOIN ' . _DB_PREFIX_ . 'feature_value_lang fvl ON (fvl.id_feature_value = pf.id_feature_value AND fvl.id_lang = ' . (int) $id_lang . ')
+                LEFT JOIN ' . _DB_PREFIX_ . 'feature f ON (f.id_feature = pf.id_feature AND fl.id_lang = ' . (int) $id_lang . ')
+                ' . Shop::addSqlAssociation('feature', 'f') . '
+                WHERE pf.id_product = ' . (int) $id_product . '
+                ORDER BY f.position ASC'
+            );
+        }
+
+        return self::$_frontFeaturesCacheOriginal[$id_product . '-' . $id_lang];
     }
 }

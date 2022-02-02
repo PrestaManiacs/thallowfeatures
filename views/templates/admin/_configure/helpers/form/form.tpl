@@ -41,6 +41,12 @@
                 </div>
             </div>
         </div>
+    {elseif $input.type == 'th_html'}
+        <div class="form-group">
+            <div class="col-xs-12 col-lg-10 col-lg-offset-1">
+                {$input.html_content nofilter}
+            </div>
+        </div>
     {else}
         {$smarty.block.parent}
     {/if}
