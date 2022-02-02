@@ -37,8 +37,8 @@ class Thallowfeatures extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->l('Features Visibility');
-        $this->description = $this->l('Choose what features to be visible.');
+        $this->displayName = $this->l('Hide Selected Features on Product Page');
+        $this->description = $this->l('Choose which features to hide on the product page.');
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
     }
